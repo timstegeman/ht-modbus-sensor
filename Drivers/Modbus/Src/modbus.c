@@ -18,19 +18,40 @@ uint32_t mb_timeout;
 extern uint32_t mb_get_tick_ms(void);
 extern void mb_tx(uint8_t *data, uint32_t len);
 
-__attribute__((weak)) uint8_t mb_read_coil_status(uint16_t start, uint16_t count) {
+__attribute__((weak))    uint8_t mb_read_coil_status(uint16_t start, uint16_t count) {
 	return MB_ERROR_ILLEGAL_DATA_ADDRESS;
 }
 
-__attribute__((weak)) uint8_t mb_read_input_status(uint16_t start, uint16_t count) {
+__attribute__((weak))    uint8_t mb_read_input_status(uint16_t start, uint16_t count) {
 	return MB_ERROR_ILLEGAL_DATA_ADDRESS;
 }
 
-__attribute__((weak)) uint8_t mb_read_holding_registers(uint16_t start, uint16_t count) {
+__attribute__((weak))    uint8_t mb_read_holding_registers(uint16_t start,
+		uint16_t count) {
 	return MB_ERROR_ILLEGAL_DATA_ADDRESS;
 }
 
-__attribute__((weak)) uint8_t mb_read_input_registers(uint16_t start, uint16_t count) {
+__attribute__((weak))    uint8_t mb_read_input_registers(uint16_t start,
+		uint16_t count) {
+	return MB_ERROR_ILLEGAL_DATA_ADDRESS;
+}
+
+__attribute__((weak))    uint8_t mb_write_single_coil(uint16_t start, uint16_t value) {
+	return MB_ERROR_ILLEGAL_DATA_ADDRESS;
+}
+
+__attribute__((weak))    uint8_t mb_write_single_register(uint16_t start,
+		uint16_t value) {
+	return MB_ERROR_ILLEGAL_DATA_ADDRESS;
+}
+
+__attribute__((weak))    uint8_t mb_write_multiple_coils(uint16_t start,
+		uint8_t *values, uint16_t len) {
+	return MB_ERROR_ILLEGAL_DATA_ADDRESS;
+}
+
+__attribute__((weak))    uint8_t mb_write_multiple_registers(uint16_t start,
+		uint16_t *values, uint16_t len) {
 	return MB_ERROR_ILLEGAL_DATA_ADDRESS;
 }
 
@@ -151,13 +172,26 @@ void mb_rx_rtu() {
 				(mb_request_buf[4] << 8) + mb_request_buf[5]);
 		break;
 	case MB_WRITE_SINGLE_COIL:
-		//TODO
+		res = mb_write_single_coil((mb_request_buf[2] << 8) + mb_request_buf[3],
+				(mb_request_buf[4] << 8) + mb_request_buf[5]);
+		break;
 	case MB_WRITE_SINGLE_REGISTER:
-		//TODO
+		res = mb_write_single_register(
+				(mb_request_buf[2] << 8) + mb_request_buf[3],
+				(mb_request_buf[4] << 8) + mb_request_buf[5]);
+		break;
 	case MB_WRITE_MULTIPLE_COILS:
-		//TODO
+		res = mb_write_multiple_coils(
+				(mb_request_buf[2] << 8) + mb_request_buf[3],
+				&mb_request_buf[6],
+				(mb_request_buf[4] << 8) + mb_request_buf[5]);
+		break;
 	case MB_WRITE_MULTIPLE_REGISTERS:
-		//TODO
+		res = mb_write_multiple_registers(
+				(mb_request_buf[2] << 8) + mb_request_buf[3],
+				(uint16_t*)&mb_request_buf[6],
+				(mb_request_buf[4] << 8) + mb_request_buf[5]);
+		break;
 	default:
 		res = MB_ERROR_ILLEGAL_FUNCTION;
 		break;
